@@ -106,6 +106,18 @@ export async function fetchUserImages(data: Data, settings: ProfileSettings) {
       ImageSize.ACTIVITY_LARGE
     );
 
+  // Fetch album art from non-Spotify listening activity (e.g. Apple Music via discord-music-presence)
+  if (!albumCover) {
+    const musicActivity = data.activities.find((a) => a.type === 2 && !data.listening_to_spotify);
+    if (musicActivity?.assets?.large_image)
+      albumCover = await encodeBase64(
+        musicActivity.assets.large_image.startsWith("mp:external/")
+          ? `${musicActivity.assets.large_image.replace(/mp:external\/([^\/]*)\/(http[s])/g, "$2:/")}`
+          : `https://cdn.discordapp.com/app-assets/${musicActivity.application_id}/${musicActivity.assets.large_image}.webp`,
+        ImageSize.ACTIVITY_LARGE
+      );
+  }
+
   return {
     avatar,
     clanBadge,

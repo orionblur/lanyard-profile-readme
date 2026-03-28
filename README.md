@@ -83,9 +83,9 @@ If you don't want people seeing the profile you have on Discord, append the quer
 
 If you don't want people seeing the your activity, append the query param `hideActivity=true` to the end of the URL or use `hideActivity=whenNotUsed` to hide activity section when there's no activity to display. Activity are shown by default.
 
-### ___Hide Spotify___
+### ___Hide Spotify / Apple Music___
 
-If you don't want people seeing your Spotify activity, append the query param `hideSpotify=true` to the end of the URL. Spotify activity is shown by default.
+If you don't want people seeing your music activity, append the query param `hideSpotify=true` or `hideAppleMusic=true` to the end of the URL. Music activity is shown by default.
 
 ### ___Hide App by ID___
 

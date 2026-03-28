@@ -11,6 +11,7 @@ export type ProfileSettings = {
   hideProfile?: boolean;
   hideActivity?: boolean | "whenNotUsed";
   hideSpotify?: boolean;
+  hideAppleMusic?: boolean;
   hideTag?: boolean;
   hideDecoration?: boolean;
   ignoreAppId?: string[];
@@ -33,6 +34,7 @@ export type SearchParams = {
   hideProfile?: string;
   hideActivity?: string;
   hideSpotify?: string;
+  hideAppleMusic?: string;
   hideTag?: string;
   hideDecoration?: string;
   ignoreAppId?: string;
@@ -192,6 +194,12 @@ export const PARAMETER_INFO: IParameterInfo = [
     type: "boolean",
     title: "Hide Spotify",
     description: "Hides your Spotify activity only.",
+  },
+  {
+    parameter: "hideAppleMusic",
+    type: "boolean",
+    title: "Hide Apple Music",
+    description: "Hides your Apple Music activity only.",
   },
   {
     parameter: "ignoreAppId",

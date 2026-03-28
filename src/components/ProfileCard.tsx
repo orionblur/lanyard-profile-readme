@@ -30,6 +30,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
     hideProfile,
     hideActivity,
     hideSpotify,
+    hideAppleMusic,
     hideTag,
     hideDecoration,
     ignoreAppId,
@@ -89,14 +90,23 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
   const activity: Activity | undefined =
     activities.length > 0 ? activities[0] : undefined;
 
+  // Non-Spotify listening activity (e.g. Apple Music via discord-music-presence)
+  const musicActivity: Activity | undefined = !data.listening_to_spotify
+    ? data.activities.find((a) => a.type === 2)
+    : undefined;
+  const isAppleMusic = musicActivity?.name === "Apple Music";
+  const showMusicActivity = !!(musicActivity && !activity && !(isAppleMusic && hideAppleMusic));
+
   const width = "410px";
+  const hasAnyListening = data.listening_to_spotify || showMusicActivity;
+
   const height = (() => {
     if (hideProfile) return "130";
     if (hideActivity === true) return "91";
     if (
       hideActivity === "whenNotUsed" &&
       !activity &&
-      !data.listening_to_spotify
+      !hasAnyListening
     )
       return "91";
     if (hideSpotify && data.listening_to_spotify) return "210";
@@ -110,7 +120,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
     if (
       hideActivity === "whenNotUsed" &&
       !activity &&
-      !data.listening_to_spotify
+      !hasAnyListening
     )
       return "81";
     if (hideSpotify && data.listening_to_spotify) return "200";
@@ -162,7 +172,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                   hideActivity === true ||
                   (hideActivity === "whenNotUsed" &&
                     !activity &&
-                    !data.listening_to_spotify)
+                    !hasAnyListening)
                     ? "none"
                     : `solid 0.5px ${
                         theme === "dark"
@@ -593,8 +603,88 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
               </div>
             </div>
           ) : null}
+          {showMusicActivity ? (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                height: "120px",
+                marginLeft: "15px",
+                fontSize: "0.8rem",
+                paddingTop: "18px",
+              }}
+            >
+              <img
+                src={`data:image/png;base64,${
+                  albumCover ??
+                  (theme === "dark" ? UnknownIconLight : UnknownIconDark)
+                }`}
+                alt="Album Cover"
+                style={{
+                  border: musicActivity!.assets?.large_image
+                    ? "solid 0.5px #222"
+                    : undefined,
+                  width: "80px",
+                  height: "80px",
+                  borderRadius: "10px",
+                  marginRight: "15px",
+                }}
+              />
+
+              <div
+                style={{
+                  color: "#999",
+                  marginTop: "-3px",
+                  lineHeight: "1",
+                  width: "279px",
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: "0.75rem",
+                    fontWeight: "bold",
+                    color: isAppleMusic
+                      ? theme === "dark" ? "#FA243C" : "#d42135"
+                      : theme === "dark" ? "#9B59B6" : "#7d3c98",
+                    marginBottom: "15px",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Listening to {musicActivity!.name}...
+                </p>
+                <p
+                  style={{
+                    height: "15px",
+                    color: theme === "dark" ? "#fff" : "#000",
+                    fontWeight: "bold",
+                    fontSize: "0.85rem",
+                    overflow: "hidden",
+                    whiteSpace: "nowrap",
+                    textOverflow: "ellipsis",
+                    margin: "7px 0",
+                  }}
+                >
+                  {musicActivity!.details}
+                </p>
+                <p
+                  style={{
+                    margin: "7px 0",
+                    height: "15px",
+                    overflow: "hidden",
+                    whiteSpace: "nowrap",
+                    fontSize: "0.85rem",
+                    textOverflow: "ellipsis",
+                    color: theme === "dark" ? "#ccc" : "#777",
+                  }}
+                >
+                  By {musicActivity!.state?.replace(/; /g, ", ")}
+                </p>
+              </div>
+            </div>
+          ) : null}
           {!activity &&
           (!data.listening_to_spotify || hideSpotify) &&
+          !showMusicActivity &&
           !hideActivity ? (
             <div
               style={{

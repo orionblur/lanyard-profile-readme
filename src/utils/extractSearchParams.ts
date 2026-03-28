@@ -26,6 +26,7 @@ export function extractSearchParams(
       : false
   ) as boolean | "whenNotUsed";
   const hideSpotify = parseBool(params.hideSpotify);
+  const hideAppleMusic = parseBool(params.hideAppleMusic);
 
   let hideTag = parseBool(params.hideTag);
   if (!data.discord_user.primary_guild) hideTag = true;
@@ -53,6 +54,7 @@ export function extractSearchParams(
     hideProfile,
     hideActivity,
     hideSpotify,
+    hideAppleMusic,
     hideTag,
     animatedDecoration,
     hideDecoration,
