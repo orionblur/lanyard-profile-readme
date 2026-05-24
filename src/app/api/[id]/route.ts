@@ -39,7 +39,7 @@ export async function GET(
     );
 
   const lanyardData = await fetch(
-    `https://laynard.orionblur.com/v1/users/${userId}`,
+    `https://lanyard.orionblur.com/v1/users/${userId}`,
     {
       cache: "no-store",
     }
