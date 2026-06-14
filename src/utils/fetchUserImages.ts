@@ -90,7 +90,7 @@ export async function fetchUserImages(data: Data, settings: ProfileSettings) {
         if (act.assets?.large_image) {
             largeImage = await encodeBase64(
                 act.assets.large_image.startsWith("mp:external/")
-                    ? `${act.assets.large_image.replace("mp:", "https://media.discordapp.net/")}`
+                    ? `${act.assets.large_image.replace("mp:", "https://proxy.orionblur.com/proxy?url=https://media.discordapp.net/")}`
                     : `https://cdn.discordapp.com/app-assets/${act.application_id}/${act.assets.large_image}.webp`,
                 ImageSize.ACTIVITY_LARGE,
                 settings.theme
@@ -119,7 +119,7 @@ export async function fetchUserImages(data: Data, settings: ProfileSettings) {
         if (act.assets?.small_image)
             smallImage = await encodeBase64(
                 act.assets.small_image.startsWith("mp:external/")
-                    ? `${act.assets.small_image.replace("mp:", "https://media.discordapp.net/")}`
+                    ? `${act.assets.small_image.replace("mp:", "https://proxy.orionblur.com/proxy?url=https://media.discordapp.net/")}`
                     : `https://cdn.discordapp.com/app-assets/${act.application_id}/${act.assets.small_image}.webp`,
                 ImageSize.ACTIVITY_SMALL,
                 settings.theme
@@ -146,7 +146,7 @@ export async function fetchUserImages(data: Data, settings: ProfileSettings) {
         if (musicActivity?.assets?.large_image)
             albumCover = await encodeBase64(
                 musicActivity.assets.large_image.startsWith("mp:external/")
-                    ? `${musicActivity.assets.large_image.replace("mp:", "https://media.discordapp.net/")}`
+                    ? `${musicActivity.assets.large_image.replace("mp:", "https://proxy.orionblur.com/proxy?url=https://media.discordapp.net/")}`
                     : `https://cdn.discordapp.com/app-assets/${musicActivity.application_id}/${musicActivity.assets.large_image}.webp`,
                 ImageSize.ACTIVITY_LARGE
             );
