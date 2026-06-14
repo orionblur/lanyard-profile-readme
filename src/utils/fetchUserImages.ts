@@ -36,12 +36,21 @@ export async function fetchUserImages(data: Data, settings: ProfileSettings) {
 
 
   if (data.discord_user.avatar) {
-    avatar = await encodeBase64(
-      `https://cdn.discordapp.com/avatars/${data.discord_user.id}/${
-        data.discord_user.avatar
-      }.${avatarExtension}?size=${avatarExtension === "gif" ? "64" : "256"}`,
-      ImageSize.USER_AVATAR
-    );
+    if (data.discord_user.avatar.startsWith("a_")) {
+      avatar = await encodeBase64(
+          `https://cdn.discordapp.com/avatars/${data.discord_user.id}/${
+              data.discord_user.avatar
+          }.${avatarExtension}?size=${avatarExtension === "gif" ? "64" : "256"}&animated=true`,
+          ImageSize.USER_AVATAR
+      );
+    } else {
+      avatar = await encodeBase64(
+          `https://cdn.discordapp.com/avatars/${data.discord_user.id}/${
+              data.discord_user.avatar
+          }.${avatarExtension}?size=${avatarExtension === "gif" ? "64" : "256"}`,
+          ImageSize.USER_AVATAR
+      );
+    }
   } else {
     avatar = await encodeBase64(
       `https://cdn.discordapp.com/embed/avatars/${
