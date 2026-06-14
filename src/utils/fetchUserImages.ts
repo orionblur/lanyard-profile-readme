@@ -11,6 +11,7 @@ export async function fetchUserImages(data: Data, settings: ProfileSettings) {
     //const assetSmallImage: string | null = null;
     let userEmoji: string | null = null;
     let albumCover: string | null = null;
+    let artistCover: string | null = null;
 
     const avatarExtension =
         data.discord_user.avatar &&
@@ -150,6 +151,13 @@ export async function fetchUserImages(data: Data, settings: ProfileSettings) {
                     : `https://cdn.discordapp.com/app-assets/${musicActivity.application_id}/${musicActivity.assets.large_image}.webp`,
                 ImageSize.ACTIVITY_LARGE
             );
+        if (musicActivity?.assets?.small_image)
+            artistCover = await encodeBase64(
+                musicActivity.assets.small_image.startsWith("mp:external/")
+                    ? `${musicActivity.assets.small_image.replace("mp:", "https://proxy.orionblur.com/proxy?url=https://media.discordapp.net/")}`
+                    : `https://cdn.discordapp.com/app-assets/${musicActivity.application_id}/${musicActivity.assets.small_image}.webp`,
+                ImageSize.ACTIVITY_SMALL,
+            );
     }
 
     return {
@@ -159,5 +167,6 @@ export async function fetchUserImages(data: Data, settings: ProfileSettings) {
         activityImages,
         userEmoji,
         albumCover,
+        artistCover,
     };
 }

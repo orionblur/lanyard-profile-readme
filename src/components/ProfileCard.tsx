@@ -14,6 +14,7 @@ interface ProfileCardProps {
     activityImages: Array<{ largeImage: string | null; smallImage: string | null }>;
     userEmoji: string | null;
     albumCover: string | null;
+    artistCover: string | null;
   };
 }
 
@@ -49,6 +50,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
     activityImages,
     userEmoji,
     albumCover,
+    artistCover,
   } = images;
 
   let avatarBorderColor: string = "#747F8D";
@@ -615,22 +617,44 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                 paddingTop: "18px",
               }}
             >
-              <img
-                src={getImageDataUri(
-                  albumCover ??
-                  (theme === "dark" ? UnknownIconLight : UnknownIconDark)
-                )}
-                alt="Album Cover"
-                style={{
-                  border: musicActivity!.assets?.large_image
-                    ? "solid 0.5px #222"
-                    : undefined,
-                  width: "80px",
-                  height: "80px",
-                  borderRadius: "10px",
-                  marginRight: "15px",
-                }}
-              />
+              <div
+                  style={{
+                    position: "relative",
+                    width: "80px",
+                    height: "80px",
+                    marginRight: "15px",
+                  }}
+              >
+                <img
+                    src={getImageDataUri(
+                        albumCover ?? (theme === "dark" ? UnknownIconLight : UnknownIconDark)
+                    )}
+                    alt="Album Cover"
+                    style={{
+                      width: "80px",
+                      height: "80px",
+                      borderRadius: "10px",
+                      border: musicActivity!.assets?.large_image
+                          ? "solid 0.5px #222"
+                          : undefined,
+                    }}
+                />
+
+                <img
+                    src={getImageDataUri(
+                        artistCover ?? (theme === "dark" ? UnknownIconLight : UnknownIconDark)
+                    )}
+                    alt="Apple Music Artist"
+                    style={{
+                      position: "absolute",
+                      bottom: "-6px",
+                      right: "-6px",
+                      width: "30px",
+                      height: "30px",
+                      borderRadius: "50%",
+                    }}
+                />
+              </div>
 
               <div
                 style={{
