@@ -19,7 +19,7 @@ export default function Home() {
     originUrl ||
     (process.env.NODE_ENV === "development"
       ? "http://localhost:3000"
-      : "https://lanyard.cnrad.dev");
+      : "https://lanyard-profile.orionblur.com");
 
   const [userId, setUserId] = useState("");
   const [userError, setUserError] = useState<string | JSX.Element>();
