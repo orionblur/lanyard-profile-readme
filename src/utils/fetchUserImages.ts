@@ -41,7 +41,7 @@ export async function fetchUserImages(data: Data, settings: ProfileSettings) {
             avatar = await encodeBase64(
                 `https://cdn.discordapp.com/avatars/${data.discord_user.id}/${
                     data.discord_user.avatar
-                }.webp?size=${avatarExtension === "gif" ? "64" : "256"}&animated=true`,
+                }.webp?size=${avatarExtension === "gif" ? "64" : "256"}&animated=${settings.animated || false}`,
                 ImageSize.USER_AVATAR
             );
         } else {
