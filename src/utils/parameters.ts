@@ -4,6 +4,7 @@ export type ProfileSettings = {
   clanBackgroundColor?: string;
   animated?: boolean;
   animatedDecoration?: boolean;
+  animatedNameplate?: boolean;
   hideDiscrim?: boolean;
   hideStatus?: boolean;
   hideTimestamp?: boolean;
@@ -14,6 +15,7 @@ export type ProfileSettings = {
   hideAppleMusic?: boolean;
   hideTag?: boolean;
   hideDecoration?: boolean;
+  hideNameplate?: boolean;
   ignoreAppId?: string[];
   showDisplayName?: boolean;
   borderRadius?: string;
@@ -27,6 +29,7 @@ export type SearchParams = {
   clanBackgroundColor?: string;
   animated?: string;
   animatedDecoration?: string;
+  animatedNameplate?: string;
   hideDiscrim?: string;
   hideStatus?: string;
   hideTimestamp?: string;
@@ -37,6 +40,7 @@ export type SearchParams = {
   hideAppleMusic?: string;
   hideTag?: string;
   hideDecoration?: string;
+  hideNameplate?: string;
   ignoreAppId?: string;
   showDisplayName?: string;
   borderRadius?: string;
@@ -146,6 +150,19 @@ export const PARAMETER_INFO: IParameterInfo = [
     title: "Disable Animated Avatar Decoration",
     description: "Disables animated avatar decorations.",
     invertBoolean: true,
+  },
+  {
+    parameter: "animatedNameplate",
+    type: "boolean",
+    title: "Disable Animated Nameplate",
+    description: "Disables animated nameplates.",
+    invertBoolean: true,
+  },
+  {
+    parameter: "hideNameplate",
+    type: "boolean",
+    title: "Hide Nameplate",
+    description: "Hides your nameplate.",
   },
   {
     parameter: "hideDecoration",

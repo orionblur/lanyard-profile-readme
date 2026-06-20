@@ -65,6 +65,8 @@ export const ImageSize = {
   EMOJI: 32,
   ACTIVITY_LARGE: 128,
   ACTIVITY_SMALL: 32,
+  NAMEPLATE_WIDTH: 448,
+  NAMEPLATE_HEIGHT: 84
 };
 
 export function getImageDataUri(base64: string | null): string {

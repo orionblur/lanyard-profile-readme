@@ -15,6 +15,8 @@ interface ProfileCardProps {
     userEmoji: string | null;
     albumCover: string | null;
     artistCover: string | null;
+    nameplate: string | null;
+    static_nameplate: string | null;
   };
 }
 
@@ -33,6 +35,8 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
     hideAppleMusic,
     hideTag,
     hideDecoration,
+    hideNameplate,
+    animatedNameplate,
     ignoreAppId,
     hideDiscrim,
     showDisplayName,
@@ -51,6 +55,8 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
     userEmoji,
     albumCover,
     artistCover,
+    nameplate,
+    static_nameplate,
   } = images;
 
   let avatarBorderColor: string = "#747F8D";
@@ -72,9 +78,24 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
       break;
   }
 
+  const orbs_avatar_decorations: string[] = [
+    "1427463138634109026",
+    "1427463138634109027",
+    "1332505467980873728"
+  ]
+
+  const orbs_nameplates: string[] = [
+      "1427463138646954035",
+      "1427463138646954036"
+  ]
+
   const flags: string[] = getFlags(data.discord_user.public_flags);
   if (data.discord_user.avatar && data.discord_user.avatar.includes("a_"))
     flags.push("Nitro");
+  if (orbs_avatar_decorations.includes(data.discord_user.avatar_decoration_data?.sku_id as string) ||
+      orbs_nameplates.includes(data.discord_user.collectibles?.nameplate.sku_id as string)) {
+    flags.push("Orbs");
+  }
 
   let userStatus: Activity | null = null;
   if (data.activities[0] && data.activities[0].type === 4)
@@ -135,13 +156,14 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
   // Calculate height of main div element
   const divHeight = String(Number(height) - 10);
 
+  console.log("Selected nameplate: " + settings.animatedNameplate);
+
   const ForeignDiv = (
     props: DetailedHTMLProps<
       HTMLAttributes<HTMLDivElement> & { xmlns: string },
       HTMLDivElement
     >
   ) => <div {...props}>{props.children}</div>;
-
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -172,23 +194,58 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
               style={{
                 width: "400px",
                 height: "100px",
-                inset: 0,
                 display: "flex",
                 flexDirection: "row",
+                position: "relative",
+                overflow: "hidden",
+                borderTopLeftRadius: "12px",
+                borderTopRightRadius: "12px",
+                borderBottomLeftRadius: "12px",
+                borderBottomRightRadius: "12px",
                 paddingBottom: "5px",
                 borderBottom: !showActivitySection
                     ? "none"
                     : `solid 0.5px ${
                         theme === "dark"
-                          ? "hsl(0, 0%, 100%, 10%)"
-                          : "hsl(0, 0%, 0%, 10%)"
-                      }`,
+                            ? "hsl(0, 0%, 100%, 10%)"
+                            : "hsl(0, 0%, 0%, 10%)"
+                    }`,
               }}
             >
+              {nameplate && !hideNameplate ? (
+                  <div
+                      style={{
+                        position: "absolute",
+                        top: "-2px",
+                        left: "-4px",
+                        right: "-4px",
+                        height: "88px",
+                        overflow: "hidden",
+                        pointerEvents: "none",
+                        zIndex: 0,
+                        opacity: 0.55,
+                        borderRadius: borderRadius,
+                      }}
+                  >
+                    <img
+                        src={getImageDataUri(animatedNameplate ? nameplate : static_nameplate)}
+                        alt="Nameplate"
+                        style={{
+                          width: "calc(100% + 8px)",
+                          height: "100%",
+                          objectFit: "cover",
+                          objectPosition: "center center",
+                          display: "block",
+                          transform: "translateX(-12px)",
+                        }}
+                    />
+                  </div>
+              ) : null}
               <div
                 style={{
                   display: "flex",
                   position: "relative",
+                  zIndex: 1,
                   flexDirection: "row",
                   height: "80px",
                   width: "80px",
@@ -248,6 +305,8 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "center",
+                  position: "relative",
+                  zIndex: 1,
                 }}
               >
                 <div

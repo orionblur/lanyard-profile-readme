@@ -39,6 +39,19 @@ export interface DiscordUser {
   display_name: string;
   primary_guild: GuildTag | null;
   avatar_decoration_data: AvatarDecoration | null;
+  collectibles: Collectable | null;
+}
+
+export interface Collectable {
+  nameplate: Nameplate;
+}
+
+export interface Nameplate {
+  asset: string;
+  expires_at: string | null;
+  label: string;
+  palette: string;
+  sku_id: string;
 }
 
 export interface GuildTag {

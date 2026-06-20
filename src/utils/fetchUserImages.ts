@@ -12,6 +12,8 @@ export async function fetchUserImages(data: Data, settings: ProfileSettings) {
     let userEmoji: string | null = null;
     let albumCover: string | null = null;
     let artistCover: string | null = null;
+    let nameplate: string | null = null;
+    let static_nameplate: string | null = null;
 
     const avatarExtension =
         data.discord_user.avatar &&
@@ -63,6 +65,19 @@ export async function fetchUserImages(data: Data, settings: ProfileSettings) {
         );
     }
 
+    if (data.discord_user.collectibles) {
+        if (data.discord_user.collectibles?.nameplate) {
+            nameplate = await encodeBase64(
+                `https://cdn.discordapp.com/assets/collectibles/${data.discord_user.collectibles.nameplate.asset}img.png`,
+                ImageSize.NAMEPLATE_WIDTH
+            );
+            static_nameplate = await encodeBase64(
+                `https://cdn.discordapp.com/assets/collectibles/${data.discord_user.collectibles.nameplate.asset}static.png`,
+                ImageSize.NAMEPLATE_WIDTH
+            );
+        }
+    }
+
     if (
         data.discord_user.primary_guild &&
         data.discord_user.primary_guild.identity_guild_id &&
@@ -82,6 +97,7 @@ export async function fetchUserImages(data: Data, settings: ProfileSettings) {
             ImageSize.USER_DECORATION
         );
     }
+
 
     const activityImages: Array<{ largeImage: string | null; smallImage: string | null }> = [];
     for (const act of activities) {
@@ -168,5 +184,7 @@ export async function fetchUserImages(data: Data, settings: ProfileSettings) {
         userEmoji,
         albumCover,
         artistCover,
+        nameplate,
+        static_nameplate
     };
 }

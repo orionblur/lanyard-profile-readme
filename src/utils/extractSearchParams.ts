@@ -43,6 +43,8 @@ export function extractSearchParams(
   const showDisplayName = parseBool(params.showDisplayName);
   const animated = parseBool(params.animated);
   const animatedDecoration = parseBool(params.animatedDecoration);
+  const animatedNameplate = parseBool(params.animatedNameplate);
+  const hideNameplate = parseBool(params.hideNameplate);
 
   const clanBackgroundColor: string =
     params.theme === "light" ? "#e0dede" : "#111214";
@@ -57,10 +59,12 @@ export function extractSearchParams(
     hideAppleMusic,
     hideTag,
     animatedDecoration,
+    animatedNameplate,
     hideDecoration,
     ignoreAppId,
     hideDiscrim,
     showDisplayName,
+    hideNameplate,
     animated,
     optimized,
     theme: params.theme,
