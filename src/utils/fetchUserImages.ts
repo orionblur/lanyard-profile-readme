@@ -7,8 +7,6 @@ export async function fetchUserImages(data: Data, settings: ProfileSettings) {
     let avatar: string;
     let avatarDecoration: string | null = null;
     let clanBadge: string | null = null;
-    //const assetLargeImage: string | null = null;
-    //const assetSmallImage: string | null = null;
     let userEmoji: string | null = null;
     let albumCover: string | null = null;
     let artistCover: string | null = null;
