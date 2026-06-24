@@ -203,7 +203,7 @@ export const PARAMETER_INFO: IParameterInfo = [
   {
     parameter: "hideActivity",
     type: "boolean",
-    title: "Hide Activity",
+    title: "Hide Activities",
     description: "Hides your activity, keeps your profile.",
   },
   {

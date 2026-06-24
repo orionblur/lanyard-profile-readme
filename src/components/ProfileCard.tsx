@@ -133,9 +133,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
     }
 
     const hasSpotify = data.listening_to_spotify && !hideSpotify;
-    if (hasSpotify) {
-      height += ACTIVITY_BLOCK_H;
-    } else if (showMusicActivity) {
+    if (hasSpotify || showMusicActivity) {
       height += ACTIVITY_BLOCK_H;
     }
 
