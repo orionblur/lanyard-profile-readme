@@ -2,6 +2,7 @@ import { Activity, Data } from "@/utils/LanyardTypes";
 import { Badges, UnknownIconDark, UnknownIconLight } from "@/utils/badges";
 import { elapsedTime, getFlags, getImageDataUri } from "@/utils/helpers";
 import { ProfileSettings } from "@/utils/parameters";
+import { formatDistanceToNow } from "date-fns";
 import React, { DetailedHTMLProps, HTMLAttributes } from "react";
 
 interface ProfileCardProps {
@@ -37,6 +38,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
     hideDecoration,
     hideNameplate,
     animatedNameplate,
+    hideLastSeen,
     ignoreAppId,
     hideDiscrim,
     showDisplayName,
@@ -97,6 +99,12 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
     flags.push("Orbs");
   }
 
+  function formatLastSeen(timestamp: number) {
+    return formatDistanceToNow(new Date(timestamp), {
+      addSuffix: true,
+    });
+  }
+
   let userStatus: Activity | null = null;
   if (data.activities[0] && data.activities[0].type === 4)
     userStatus = data.activities[0];
@@ -153,8 +161,6 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
 
   // Calculate height of main div element
   const divHeight = String(Number(height) - 10);
-
-  console.log("Selected nameplate: " + settings.animatedNameplate);
 
   const ForeignDiv = (
     props: DetailedHTMLProps<
@@ -771,7 +777,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
             <div
               style={{
                 display: "flex",
-                flexDirection: "row",
+                flexDirection: "column",
                 height: "150px",
                 justifyContent: "center",
                 alignItems: "center",
@@ -788,6 +794,20 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
               >
                 {idleMessage}
               </p>
+              {data.discord_status === "offline" && typeof data.last_seen === "number"
+                  && !hideLastSeen && (
+                  <p
+                      style={{
+                        fontStyle: "italic",
+                        fontSize: "0.7rem",
+                        color: theme === "dark" ? "#888" : "#666",
+                        textAlign: "center",
+                        margin: 0,
+                      }}
+                  >
+                    Last seen {formatLastSeen(data.last_seen)}
+                  </p>
+              )}
             </div>
           ) : null}
         </ForeignDiv>

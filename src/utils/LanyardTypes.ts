@@ -9,6 +9,7 @@ export interface Data {
   spotify: Spotify;
   listening_to_spotify: boolean;
   discord_user: DiscordUser;
+  last_seen: number;
   discord_status: string;
   activities: Activity[];
   active_on_discord_mobile: boolean;

@@ -10,6 +10,7 @@ export type ProfileSettings = {
   hideTimestamp?: boolean;
   hideBadges?: boolean;
   hideProfile?: boolean;
+  hideLastSeen?: boolean;
   hideActivity?: boolean | "whenNotUsed";
   hideSpotify?: boolean;
   hideAppleMusic?: boolean;
@@ -33,6 +34,7 @@ export type SearchParams = {
   hideDiscrim?: string;
   hideStatus?: string;
   hideTimestamp?: string;
+  hideLastSeen?: string;
   hideBadges?: string;
   hideProfile?: string;
   hideActivity?: string;
@@ -175,6 +177,12 @@ export const PARAMETER_INFO: IParameterInfo = [
     type: "boolean",
     title: "Hide Status",
     description: "Hides your custom Discord status.",
+  },
+  {
+    parameter: "hideLastSeen",
+    type: "boolean",
+    title: "Hide Last Seen",
+    description: "Hides the time you were last seen.",
   },
   {
     parameter: "hideTimestamp",

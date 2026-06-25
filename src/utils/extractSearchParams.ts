@@ -2,7 +2,7 @@ import { Data } from "./LanyardTypes";
 import { SearchParams } from "./parameters";
 
 export const parseBool = (string: string | undefined): boolean =>
-  string === "true" ? true : false;
+  string === "true";
 
 export const parseAppId = (string: string | undefined): Array<string> => {
   if (string === undefined) return [];
@@ -45,6 +45,7 @@ export function extractSearchParams(
   const animatedDecoration = parseBool(params.animatedDecoration);
   const animatedNameplate = parseBool(params.animatedNameplate);
   const hideNameplate = parseBool(params.hideNameplate);
+  const hideLastSeen = parseBool(params.hideLastSeen);
 
   const clanBackgroundColor: string =
     params.theme === "light" ? "#e0dede" : "#111214";
@@ -63,6 +64,7 @@ export function extractSearchParams(
     hideDecoration,
     ignoreAppId,
     hideDiscrim,
+    hideLastSeen,
     showDisplayName,
     hideNameplate,
     animated,
