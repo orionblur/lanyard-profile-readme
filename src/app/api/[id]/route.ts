@@ -59,9 +59,9 @@ export async function GET(
     );
   }
 
-  const settings = await extractSearchParams(
-    Object.fromEntries(searchParams.entries()),
-    lanyardData.data
+  const settings = extractSearchParams(
+      Object.fromEntries(searchParams.entries()),
+      lanyardData.data
   );
 
   // Generate SVG
