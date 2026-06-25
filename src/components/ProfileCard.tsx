@@ -1,5 +1,5 @@
 import { Activity, Data } from "@/utils/LanyardTypes";
-import { Badges, UnknownIconDark, UnknownIconLight } from "@/utils/badges";
+import {Badges, MobileOnlineIcon, UnknownIconDark, UnknownIconLight} from "@/utils/badges";
 import { elapsedTime, getFlags, getImageDataUri } from "@/utils/helpers";
 import { ProfileSettings } from "@/utils/parameters";
 import { formatDistanceToNow } from "date-fns";
@@ -79,6 +79,10 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
       avatarBorderColor = "#747F8D";
       break;
   }
+
+  const showMobileBadge =
+      data.active_on_discord_mobile &&
+      data.discord_status === "online";
 
   const orbs_avatar_decorations: string[] = [
     "1427463138634109026",
@@ -288,19 +292,34 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                   </>
                 )}
 
-                <span
-                  style={{
-                    position: "absolute",
-                    bottom: "14px",
-                    right: "14px",
-                    height: "13px",
-                    width: "13px",
-                    backgroundColor: avatarBorderColor,
-                    borderRadius: "50%",
-                    border: `3px solid #${backgroundColor}`,
-                  }}
-                />
-              </div>
+                {showMobileBadge ? (
+                    <img
+                        src={getImageDataUri(MobileOnlineIcon)}
+                        alt="Mobile Online"
+                        style={{
+                          position: "absolute",
+                          bottom: "14px",
+                          right: "17px",
+                          width: "12px",
+                          height: "17.5px",
+                          display: "block",
+                        }}
+                    />
+                ) : (
+                    <span
+                        style={{
+                          position: "absolute",
+                          bottom: "14px",
+                          right: "14px",
+                          height: "13px",
+                          width: "13px",
+                          backgroundColor: avatarBorderColor,
+                          borderRadius: "50%",
+                          border: `3px solid #${backgroundColor}`,
+                        }}
+                    />
+                )}
+            </div>
 
               <div
                 style={{
