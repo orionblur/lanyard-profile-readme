@@ -11,6 +11,12 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
+    {
+      files: ["src/components/ProfileCard.tsx", "src/app/page.tsx"],
+      rules: {
+        "@next/next/no-img-element": "off",
+      }
+    }
 ];
 
 export default eslintConfig;
