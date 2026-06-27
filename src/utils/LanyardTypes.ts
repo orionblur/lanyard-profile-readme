@@ -84,6 +84,7 @@ export interface Activity {
   details?: string;
   assets?: Assets;
   buttons?: string[];
+  url? : string;
 }
 
 export interface Emoji {
