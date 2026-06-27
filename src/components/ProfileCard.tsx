@@ -13,6 +13,7 @@ interface ProfileCardProps {
     avatarDecoration: string | null;
     clanBadge: string | null;
     activityImages: Array<{ largeImage: string | null; smallImage: string | null }>;
+    streamingImage: string | null;
     userEmoji: string | null;
     albumCover: string | null;
     artistCover: string | null;
@@ -39,6 +40,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
     hideNameplate,
     animatedNameplate,
     hideLastSeen,
+    hideStreaming,
     ignoreAppId,
     hideDiscrim,
     showDisplayName,
@@ -54,6 +56,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
     avatarDecoration,
     clanBadge,
     activityImages,
+    streamingImage,
     userEmoji,
     albumCover,
     artistCover,
@@ -80,9 +83,6 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
       break;
   }
 
-  const showMobileBadge =
-      data.active_on_discord_mobile &&
-      data.discord_status === "online";
 
   const orbs_avatar_decorations: string[] = [
     "1427463138634109026",
@@ -124,16 +124,28 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
   const musicActivity: Activity | undefined = !data.listening_to_spotify
     ? data.activities.find((a) => a.type === 2)
     : undefined;
+  const streamingActivity: Activity | undefined = data.activities.find((a) => a.type === 1);
   const isAppleMusic = musicActivity?.name === "Apple Music";
   const showMusicActivity = !!(musicActivity && !(isAppleMusic && hideAppleMusic));
 
   const width = "410px";
   const hasAnyListening = data.listening_to_spotify || showMusicActivity;
+  console.log(activities.length);
 
   const showActivitySection = hideActivity !== true &&
-    !(hideActivity === "whenNotUsed" && activities.length === 0 && !hasAnyListening);
+    !(hideActivity === "whenNotUsed" && activities.length === 0 && !hasAnyListening && !!streamingActivity);
 
   const ACTIVITY_BLOCK_H = 110;
+
+  if (streamingActivity) {
+    avatarBorderColor = "#9147FF";
+  }
+
+
+  const showMobileBadge =
+      data.active_on_discord_mobile &&
+      data.discord_status === "online"
+      && !streamingActivity;
 
   // Calculate activity section height based on visible content
   const activitySectionH = (() => {
@@ -146,6 +158,11 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
 
     const hasSpotify = data.listening_to_spotify && !hideSpotify;
     if (hasSpotify || showMusicActivity) {
+      height += ACTIVITY_BLOCK_H;
+    }
+
+    const hasStreaming = !!streamingActivity;
+    if (hasStreaming) {
       height += ACTIVITY_BLOCK_H;
     }
 
@@ -165,6 +182,19 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
 
   // Calculate height of main div element
   const divHeight = String(Number(height) - 10);
+
+  const showSpotify =
+      data.listening_to_spotify && !hideSpotify;
+
+  const showStreaming =
+      !!streamingActivity && !hideStreaming;
+
+  const showIdle =
+      showActivitySection &&
+      activities.length === 0 &&
+      !showSpotify &&
+      !showStreaming &&
+      !showMusicActivity;
 
   const ForeignDiv = (
     props: DetailedHTMLProps<
@@ -688,6 +718,84 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
               </div>
             </div>
           ) : null}
+          {showActivitySection &&
+              showStreaming ? (
+              <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    height: "120px",
+                    marginLeft: "15px",
+                    fontSize: "0.8rem",
+                    paddingTop: "18px",
+                  }}
+              >
+                <img
+                    src={getImageDataUri(
+                        streamingImage ??
+                        (theme === "dark" ? UnknownIconLight : UnknownIconDark)
+                    )}
+                    alt="Stream Preview"
+                    style={{
+                      border: streamingActivity?.url
+                          ? "border: solid 0.5px #222"
+                          : undefined,
+                      width: "80px",
+                      height: "80px",
+                      borderRadius: "10px",
+                      marginRight: "15px",
+                    }}
+                />
+
+                <div
+                    style={{
+                      color: "#999",
+                      marginTop: "-8px",
+                      lineHeight: "1",
+                      width: "279px",
+                    }}
+                >
+                  <p
+                      style={{
+                        fontSize: "0.75rem",
+                        fontWeight: "bold",
+                        color: theme === "dark" ? "#9147FF" : "#ac87e7",
+                        marginBottom: "10px",
+                        textTransform: "uppercase",
+                      }}
+                  >
+                    Streaming {streamingActivity?.name}
+                  </p>
+                  <p
+                      style={{
+                        height: "15px",
+                        color: theme === "dark" ? "#fff" : "#000",
+                        fontWeight: "bold",
+                        fontSize: "0.85rem",
+                        overflow: "hidden",
+                        whiteSpace: "nowrap",
+                        textOverflow: "ellipsis",
+                        margin: "7px 0",
+                      }}
+                  >
+                    {streamingActivity?.state}
+                  </p>
+                  <p
+                      style={{
+                        margin: "7px 0",
+                        height: "15px",
+                        overflow: "hidden",
+                        whiteSpace: "nowrap",
+                        fontSize: "0.85rem",
+                        textOverflow: "ellipsis",
+                        color: theme === "dark" ? "#ccc" : "#777",
+                      }}
+                  >
+                    {streamingActivity?.details}
+                  </p>
+                </div>
+              </div>
+          ) : null}
           {showMusicActivity && showActivitySection ? (
             <div
               style={{
@@ -789,10 +897,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
               </div>
             </div>
           ) : null}
-          {showActivitySection &&
-          activities.length === 0 &&
-          (!data.listening_to_spotify || hideSpotify) &&
-          !showMusicActivity ? (
+          {showIdle ? (
             <div
               style={{
                 display: "flex",

@@ -15,6 +15,7 @@ export type ProfileSettings = {
   hideSpotify?: boolean;
   hideAppleMusic?: boolean;
   hideTag?: boolean;
+  hideStreaming?: boolean;
   hideDecoration?: boolean;
   hideNameplate?: boolean;
   ignoreAppId?: string[];
@@ -38,6 +39,7 @@ export type SearchParams = {
   hideBadges?: string;
   hideProfile?: string;
   hideActivity?: string;
+  hideStreaming?: string;
   hideSpotify?: string;
   hideAppleMusic?: string;
   hideTag?: string;
@@ -183,6 +185,12 @@ export const PARAMETER_INFO: IParameterInfo = [
     type: "boolean",
     title: "Hide Last Seen",
     description: "Hides the time you were last seen.",
+  },
+  {
+    parameter: "hideStreaming",
+    type: "boolean",
+    title: "Hide Streaming",
+    description: "Hides your stream activity.",
   },
   {
     parameter: "hideTimestamp",

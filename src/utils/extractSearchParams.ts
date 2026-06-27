@@ -46,6 +46,7 @@ export function extractSearchParams(
   const animatedNameplate = parseBool(params.animatedNameplate);
   const hideNameplate = parseBool(params.hideNameplate);
   const hideLastSeen = parseBool(params.hideLastSeen);
+  const hideStreaming = parseBool(params.hideStreaming);
 
   const clanBackgroundColor: string =
     params.theme === "light" ? "#e0dede" : "#111214";
@@ -65,6 +66,7 @@ export function extractSearchParams(
     ignoreAppId,
     hideDiscrim,
     hideLastSeen,
+    hideStreaming,
     showDisplayName,
     hideNameplate,
     animated,
