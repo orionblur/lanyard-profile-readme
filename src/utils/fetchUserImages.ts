@@ -3,6 +3,28 @@ import {ProfileSettings} from "./parameters";
 import {ImageSize} from "./helpers";
 import {encodeBase64} from "./toBase64";
 
+async function rpcFetch(act: Activity, largeImage: string | null, settings: ProfileSettings) {
+    try {
+        const appInfo = await fetch(
+            `https://discord.com/api/v10/applications/${act.application_id}/rpc`,
+            {
+                next: {revalidate: 86400} // Cache application details for 1 day
+            }
+        ).then(res => res.ok ? res.json() as Promise<{ icon?: string } | null> : null);
+
+        if (appInfo && appInfo.icon) {
+            largeImage = await encodeBase64(
+                `https://cdn.discordapp.com/app-icons/${act.application_id}/${appInfo.icon}.webp`,
+                ImageSize.ACTIVITY_LARGE,
+                settings.theme
+            );
+        }
+    } catch (error) {
+        console.error(`Failed to fetch fallback icon for app ${act.application_id}:`, error);
+    }
+    return largeImage;
+}
+
 export async function fetchUserImages(data: Data, settings: ProfileSettings) {
     let avatar: string;
     let avatarDecoration: string | null = null;
@@ -12,6 +34,7 @@ export async function fetchUserImages(data: Data, settings: ProfileSettings) {
     let artistCover: string | null = null;
     let nameplate: string | null = null;
     let static_nameplate: string | null = null;
+    let streamingImage: string | null = null;
 
     const avatarExtension =
         data.discord_user.avatar &&
@@ -106,29 +129,12 @@ export async function fetchUserImages(data: Data, settings: ProfileSettings) {
             largeImage = await encodeBase64(
                 act.assets.large_image.startsWith("mp:external/")
                     ? `${act.assets.large_image.replace("mp:", "https://proxy.orionblur.com/proxy?url=https://media.discordapp.net/")}`
-                    : `https://cdn.discordapp.com/app-assets/${act.application_id}/${act.assets.large_image}.webp`,
+                    : `https://cdn.discordapp.com/app-icons/${act.application_id}/${act.assets.large_image}.webp`,
                 ImageSize.ACTIVITY_LARGE,
                 settings.theme
             );
         } else if (act.application_id) {
-            try {
-                const appInfo = await fetch(
-                    `https://discord.com/api/v9/applications/${act.application_id}/rpc`,
-                    {
-                        next: {revalidate: 86400} // Cache application details for 1 day
-                    }
-                ).then(res => res.ok ? res.json() as Promise<{ icon?: string } | null> : null);
-
-                if (appInfo && appInfo.icon) {
-                    largeImage = await encodeBase64(
-                        `https://cdn.discordapp.com/app-icons/${act.application_id}/${appInfo.icon}.webp`,
-                        ImageSize.ACTIVITY_LARGE,
-                        settings.theme
-                    );
-                }
-            } catch (error) {
-                console.error(`Failed to fetch fallback icon for app ${act.application_id}:`, error);
-            }
+            largeImage = await rpcFetch(act, largeImage, settings);
         }
 
         if (act.assets?.small_image)
@@ -141,6 +147,27 @@ export async function fetchUserImages(data: Data, settings: ProfileSettings) {
             );
 
         activityImages.push({largeImage, smallImage});
+    }
+
+    if (data.activities.some((activity) => activity.type === 1)) {
+        const streamingActivity = data.activities.find((activity) => activity.type === 1);
+        if (streamingActivity?.assets?.large_image) {
+            let imageURL: string | null = null;
+            if (streamingActivity.assets.large_image.startsWith("twitch:")) {
+                imageURL = `https://static-cdn.jtvnw.net/previews-ttv/live_user_${streamingActivity.assets.large_image.replace("twitch:", "")}.png`;
+            } else if (streamingActivity.assets.large_image.startsWith("youtube:")) {
+                imageURL = `https://i.ytimg.com/vi/${streamingActivity.assets.large_image.replace("youtube:", "")}/hqdefault_live.jpg`;
+            } else if (streamingActivity.assets.large_image.startsWith("mp:external/")) {
+                imageURL = `https://proxy.orionblur.com/proxy?url=https://media.discordapp.net/${streamingActivity.assets.large_image.replace("mp:", "")}`;
+            } else {
+                imageURL = `https://cdn.discordapp.com/app-assets/${streamingActivity.application_id}/${streamingActivity.assets.large_image}.webp`;
+            }
+            streamingImage = await encodeBase64(imageURL, ImageSize.ACTIVITY_LARGE, settings.theme);
+        } else {
+            if (streamingActivity) {
+                streamingImage = await rpcFetch(streamingActivity, streamingImage, settings)
+            }
+        }
     }
 
     if (userStatus?.emoji?.id)
@@ -180,6 +207,7 @@ export async function fetchUserImages(data: Data, settings: ProfileSettings) {
         avatarDecoration,
         activityImages,
         userEmoji,
+        streamingImage,
         albumCover,
         artistCover,
         nameplate,
