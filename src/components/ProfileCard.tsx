@@ -1,5 +1,5 @@
 import { Activity, Data } from "@/utils/LanyardTypes";
-import {Badges, MobileOnlineIcon, UnknownIconDark, UnknownIconLight} from "@/utils/badges";
+import {Badges, MobileOnlineIcon, UnknownIconDark, UnknownIconLight, VROnlineIcon} from "@/utils/badges";
 import { elapsedTime, getFlags, getImageDataUri } from "@/utils/helpers";
 import { ProfileSettings } from "@/utils/parameters";
 import { formatDistanceToNow } from "date-fns";
@@ -130,7 +130,6 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
 
   const width = "410px";
   const hasAnyListening = data.listening_to_spotify || showMusicActivity;
-  console.log(activities.length);
 
   const showActivitySection = hideActivity !== true &&
     !(hideActivity === "whenNotUsed" && activities.length === 0 && !hasAnyListening && !!streamingActivity);
@@ -144,6 +143,11 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
 
   const showMobileBadge =
       data.active_on_discord_mobile &&
+      data.discord_status === "online"
+      && !streamingActivity;
+
+  const showVRBadge =
+      data.active_on_discord_vr &&
       data.discord_status === "online"
       && !streamingActivity;
 
@@ -321,7 +325,6 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                     />
                   </>
                 )}
-
                 {showMobileBadge ? (
                     <img
                         src={getImageDataUri(MobileOnlineIcon)}
@@ -332,6 +335,19 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                           right: "17px",
                           width: "12px",
                           height: "17.5px",
+                          display: "block",
+                        }}
+                    />
+                ) : showVRBadge ? (
+                    <img
+                        src={getImageDataUri(VROnlineIcon)}
+                        alt="VR Online"
+                        style={{
+                          position: "absolute",
+                          bottom: "8px",
+                          right: "5px",
+                          width: "28px",
+                          height: "25px",
                           display: "block",
                         }}
                     />
@@ -350,7 +366,6 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                     />
                 )}
             </div>
-
               <div
                 style={{
                   height: "80px",

@@ -14,6 +14,7 @@ export interface Data {
   activities: Activity[];
   active_on_discord_mobile: boolean;
   active_on_discord_desktop: boolean;
+  active_on_discord_vr: boolean;
 }
 
 export interface Spotify {

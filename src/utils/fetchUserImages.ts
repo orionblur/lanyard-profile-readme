@@ -25,6 +25,22 @@ async function rpcFetch(act: Activity, largeImage: string | null, settings: Prof
     return largeImage;
 }
 
+async function largeImageFetch(activity: Activity, imageSize: number, settings: ProfileSettings): Promise<string> {
+    let imageURL: string | null;
+    if (activity.assets?.large_image.startsWith("twitch:")) {
+        imageURL = `https://static-cdn.jtvnw.net/previews-ttv/live_user_${activity.assets.large_image.replace("twitch:", "")}.png`;
+    } else if (activity.assets?.large_image.startsWith("youtube:")) {
+        imageURL = `https://i.ytimg.com/vi/${activity.assets.large_image.replace("youtube:", "")}/hqdefault_live.jpg`;
+    } else if (activity.assets?.large_image.startsWith("mp:external/")) {
+        imageURL = `https://proxy.orionblur.com/proxy?url=https://media.discordapp.net/${activity.assets.large_image.replace("mp:", "")}`;
+    } else if (activity.assets?.large_image.startsWith("mp:stickers/")) {
+        imageURL = `https://cdn.discordapp.com/stickers/${activity.assets.large_image.replace("mp:stickers/", "").split(".")[0]}.png`;
+    } else {
+        imageURL = `https://cdn.discordapp.com/app-assets/${activity.application_id}/${activity.assets?.large_image}.webp`;
+    }
+    return await encodeBase64(imageURL, imageSize, settings.theme);
+}
+
 export async function fetchUserImages(data: Data, settings: ProfileSettings) {
     let avatar: string;
     let avatarDecoration: string | null = null;
@@ -126,13 +142,7 @@ export async function fetchUserImages(data: Data, settings: ProfileSettings) {
         let smallImage: string | null = null;
 
         if (act.assets?.large_image) {
-            largeImage = await encodeBase64(
-                act.assets.large_image.startsWith("mp:external/")
-                    ? `${act.assets.large_image.replace("mp:", "https://proxy.orionblur.com/proxy?url=https://media.discordapp.net/")}`
-                    : `https://cdn.discordapp.com/app-icons/${act.application_id}/${act.assets.large_image}.webp`,
-                ImageSize.ACTIVITY_LARGE,
-                settings.theme
-            );
+            largeImage = await largeImageFetch(act, ImageSize.ACTIVITY_LARGE, settings);
         } else if (act.application_id) {
             largeImage = await rpcFetch(act, largeImage, settings);
         }
@@ -152,21 +162,9 @@ export async function fetchUserImages(data: Data, settings: ProfileSettings) {
     if (data.activities.some((activity) => activity.type === 1)) {
         const streamingActivity = data.activities.find((activity) => activity.type === 1);
         if (streamingActivity?.assets?.large_image) {
-            let imageURL: string | null = null;
-            if (streamingActivity.assets.large_image.startsWith("twitch:")) {
-                imageURL = `https://static-cdn.jtvnw.net/previews-ttv/live_user_${streamingActivity.assets.large_image.replace("twitch:", "")}.png`;
-            } else if (streamingActivity.assets.large_image.startsWith("youtube:")) {
-                imageURL = `https://i.ytimg.com/vi/${streamingActivity.assets.large_image.replace("youtube:", "")}/hqdefault_live.jpg`;
-            } else if (streamingActivity.assets.large_image.startsWith("mp:external/")) {
-                imageURL = `https://proxy.orionblur.com/proxy?url=https://media.discordapp.net/${streamingActivity.assets.large_image.replace("mp:", "")}`;
-            } else {
-                imageURL = `https://cdn.discordapp.com/app-assets/${streamingActivity.application_id}/${streamingActivity.assets.large_image}.webp`;
-            }
-            streamingImage = await encodeBase64(imageURL, ImageSize.ACTIVITY_LARGE, settings.theme);
-        } else {
-            if (streamingActivity) {
-                streamingImage = await rpcFetch(streamingActivity, streamingImage, settings)
-            }
+            streamingImage = await largeImageFetch(streamingActivity, ImageSize.ACTIVITY_LARGE, settings);
+        } else if (streamingActivity) {
+            streamingImage = await rpcFetch(streamingActivity, streamingImage, settings)
         }
     }
 
